@@ -8,9 +8,8 @@ import io
 import sys
 tesseract_bin = shutil.which("tesseract")
 print(f"DEBUG: Tesseract binary located at: {tesseract_bin}")
-
-if tesseract_bin:
-    pytesseract.pytesseract.tesseract_cmd = tesseract_bin
+if os.path.exists("/usr/bin/tesseract"):
+    pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 else:
     # If it's not in the PATH, let's check common Linux locations
     common_locations = ["/usr/bin/tesseract", "/usr/local/bin/tesseract"]
