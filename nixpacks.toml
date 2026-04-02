@@ -1,0 +1,5 @@
+[phases.setup]
+aptPkgs = ["tesseract-ocr", "libtesseract-dev", "tesseract-ocr-eng"]
+
+[variables]
+TESSDATA_PREFIX = "/usr/share/tesseract-ocr/5/tessdata"
