@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
   try {
     const { object } = await generateObject({
-      model: google("gemini-3-flash-preview"),
+      model: google("gemini-1.5-flash"),
       schema: tableSchema,
       messages: [
         {
@@ -82,7 +82,7 @@ Rules:
             },
             {
               type: "image",
-              image: buffer,
+              image: dataUrl,
             },
           ],
         },
