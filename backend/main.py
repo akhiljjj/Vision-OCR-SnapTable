@@ -6,6 +6,7 @@ import os
 from PIL import Image
 import io
 import sys
+import uvicorn
 
 
 def _configure_tesseract() -> str | None:
@@ -38,6 +39,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def _startup_log():
+    tesseract_path = shutil.which("tesseract")
+    print(f"DEBUG startup: tesseract_in_path={tesseract_path!r}")
+
 
 @app.post("/api/ocr")
 async def perform_ocr(file: UploadFile = File(...)):
@@ -87,15 +95,9 @@ async def perform_ocr(file: UploadFile = File(...)):
 
 @app.get("/api/health")
 def health():
-    common_paths = ["/usr/bin/tesseract", "/usr/local/bin/tesseract", "/bin/tesseract"]
-    tesseract_in_path = shutil.which("tesseract")
-    return {
-        "ok": True,
-        "python": sys.version,
-        "tesseract_cmd": getattr(pytesseract.pytesseract, "tesseract_cmd", None),
-        "tesseract_in_path": tesseract_in_path,
-        "tesseract_common_paths": {p: os.path.exists(p) for p in common_paths},
-        "pillow_version": getattr(Image, "__version__", None),
-        "docs_url": app.docs_url,
-        "openapi_url": app.openapi_url,
-    }
+    return {"status": "ok", "service": "vision-ocr-backend"}
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
