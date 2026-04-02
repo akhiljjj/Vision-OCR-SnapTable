@@ -94,7 +94,8 @@ export function OcrDashboard() {
     setError(null);
     try {
       const fd = new FormData();
-      fd.append("image", file);
+      // FastAPI expects the uploaded file field name to be `file`.
+      fd.append("file", file);
       const apiBaseUrl = (
         process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
       ).replace(/\/$/, "");

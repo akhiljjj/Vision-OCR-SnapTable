@@ -35,10 +35,11 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid form data" }, { status: 400 });
   }
 
-  const file = formData.get("image");
-  if (!(file instanceof File) || file.size === 0) {
+  const uploaded = formData.get("file") ?? formData.get("image");
+  if (!(uploaded instanceof File) || uploaded.size === 0) {
     return Response.json({ error: "No image file provided" }, { status: 400 });
   }
+  const file = uploaded;
 
   let mime = (file.type || "").toLowerCase();
   if (!mime && file.name) {
