@@ -56,6 +56,7 @@ async def perform_ocr(file: UploadFile = File(...)):
 
         tesseract_path = _configure_tesseract()
         if not tesseract_path:
+            print("ERROR /api/ocr: Tesseract binary not found in PATH/common locations")
             raise HTTPException(
                 status_code=500,
                 detail=(
@@ -66,30 +67,36 @@ async def perform_ocr(file: UploadFile = File(...)):
 
         image_data = await file.read()
         if not image_data:
+            print("ERROR /api/ocr: Empty upload received for field 'file'")
             raise HTTPException(status_code=400, detail="Empty upload")
 
         try:
             image = Image.open(io.BytesIO(image_data))
             image.load()
-        except Exception:
+        except Exception as e:
+            print(f"ERROR /api/ocr: Invalid image payload: {type(e).__name__}: {str(e)}")
             raise HTTPException(status_code=400, detail="Invalid or unsupported image file")
 
         try:
             text = pytesseract.image_to_string(image)
         except pytesseract.TesseractNotFoundError as e:
+            print(f"ERROR /api/ocr: TesseractNotFoundError: {str(e)}")
             raise HTTPException(
                 status_code=500,
                 detail=f"Tesseract not available on server: {str(e)}",
             )
         except Exception as e:
+            print(f"ERROR /api/ocr: OCR engine failure: {type(e).__name__}: {str(e)}")
             raise HTTPException(
                 status_code=500, detail=f"Tesseract OCR failed: {type(e).__name__}: {str(e)}"
             )
 
         return {"text": text}
-    except HTTPException:
+    except HTTPException as e:
+        print(f"ERROR /api/ocr: HTTPException {e.status_code}: {e.detail}")
         raise
     except Exception as e:
+        print(f"ERROR /api/ocr: Unhandled exception: {type(e).__name__}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"OCR failed: {type(e).__name__}: {str(e)}")
 
 
