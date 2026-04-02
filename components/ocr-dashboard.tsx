@@ -198,7 +198,7 @@ export function OcrDashboard() {
           Table extraction studio
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-400">
-          Drop a PNG or JPG, preview it, then run Gemini 3 Flash OCR. Edit any cell, or reshape
+          Drop a PNG or JPG, preview it, then run Gemini 2.5 Flash OCR. Edit any cell, or reshape
           the grid with add/remove rows and columns.
         </p>
       </header>
