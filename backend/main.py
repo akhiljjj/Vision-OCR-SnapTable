@@ -32,6 +32,16 @@ app.add_middleware(
 @app.post("/api/ocr")
 async def perform_ocr(file: UploadFile = File(...)):
     try:
+        tesseract_path = shutil.which("tesseract")
+        if not tesseract_path:
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "Tesseract is not installed on the server (shutil.which('tesseract') is null). "
+                    "Install it in your Railway image (e.g. via Nixpacks aptPkgs: tesseract-ocr)."
+                ),
+            )
+
         image_data = await file.read()
         if not image_data:
             raise HTTPException(status_code=400, detail="Empty upload")
@@ -59,10 +69,12 @@ async def perform_ocr(file: UploadFile = File(...)):
 
 @app.get("/api/health")
 def health():
+    common_paths = ["/usr/bin/tesseract", "/usr/local/bin/tesseract", "/bin/tesseract"]
     return {
         "ok": True,
         "python": sys.version,
         "tesseract_cmd": getattr(pytesseract.pytesseract, "tesseract_cmd", None),
         "tesseract_in_path": shutil.which("tesseract"),
+        "tesseract_common_paths": {p: os.path.exists(p) for p in common_paths},
         "pillow_version": getattr(Image, "__version__", None),
     }
