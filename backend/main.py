@@ -91,7 +91,15 @@ async def perform_ocr(file: UploadFile = File(...)):
                 status_code=500, detail=f"Tesseract OCR failed: {type(e).__name__}: {str(e)}"
             )
 
-        return {"text": text}
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+        columns = ["Line", "Text"]
+        rows = [[str(i + 1), line] for i, line in enumerate(lines)]
+
+        # Keep response shape aligned with frontend table expectations.
+        if not rows:
+            rows = [["1", ""]]
+
+        return {"columns": columns, "rows": rows, "text": text}
     except HTTPException as e:
         print(f"ERROR /api/ocr: HTTPException {e.status_code}: {e.detail}")
         raise
