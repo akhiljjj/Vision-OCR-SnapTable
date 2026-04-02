@@ -99,7 +99,9 @@ export function OcrDashboard() {
       const apiBaseUrl = (
         process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
       ).replace(/\/$/, "");
-      const res = await fetch(`${apiBaseUrl}/api/ocr`, {
+      const url = `${apiBaseUrl}/api/ocr`;
+      console.log("Target URL:", url);
+      const res = await fetch(url, {
         method: "POST",
         body: fd,
       });
