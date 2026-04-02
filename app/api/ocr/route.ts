@@ -58,7 +58,6 @@ export async function POST(request: Request) {
   }
 
   // Pass binary data directly to the provider.
-  // Using a `data:` URL string can cause the SDK to treat it as a downloadable URL.
   const buffer = Buffer.from(await file.arrayBuffer());
 
   try {
@@ -107,3 +106,4 @@ Rules:
     return Response.json({ error: message }, { status: 400 });
   }
 }
+

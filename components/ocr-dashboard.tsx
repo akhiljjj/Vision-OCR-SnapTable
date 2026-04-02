@@ -95,7 +95,13 @@ export function OcrDashboard() {
     try {
       const fd = new FormData();
       fd.append("image", file);
-      const res = await fetch("/api/extract", { method: "POST", body: fd });
+      const apiBaseUrl = (
+        process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
+      ).replace(/\/$/, "");
+      const res = await fetch(`${apiBaseUrl}/api/ocr`, {
+        method: "POST",
+        body: fd,
+      });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setError(typeof data.error === "string" ? data.error : "Extraction failed.");
